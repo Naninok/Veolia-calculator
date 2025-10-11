@@ -1,1 +1,0 @@
-# Veolia-calculator
