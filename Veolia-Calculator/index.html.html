@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Veolia — Chemical Cost Calculator</title>
+  <style>
+    :root{
+      --veolia-red: #d9181f; /* red tone */
+      --accent: #f7f7f7;
+      --card-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      --radius: 14px;
+      --glass: rgba(255,255,255,0.9);
+      font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: linear-gradient(180deg,#fff 0%, #fbfbfb 100%);
+      color:#222;
+    }
+    .container{
+      width:980px;
+      max-width:94%;
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap:22px;
+      align-items:start;
+    }
+
+    .card {
+      background:var(--glass);
+      border-radius:var(--radius);
+      padding:24px;
+      box-shadow:var(--card-shadow);
+      border:1px solid rgba(0,0,0,0.03);
+    }
+
+    header.logo {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    header.logo img{
+      height:36px;
+    }
+    h1.title {
+      font-size:20px;
+      margin:0;
+      color:var(--veolia-red);
+      font-weight:700;
+    }
+    .small { color:#666; font-size:13px; margin-top:6px; }
+
+    label { display:block; font-weight:600; margin-top:14px; font-size:14px; color:#222; }
+    .row { display:flex; gap:10px; align-items:center; margin-top:8px; }
+    input[type="number"]{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid rgba(0,0,0,0.08);
+      background:#fff;
+      font-size:15px;
+      box-sizing:border-box;
+    }
+    .hint { font-size:12px; color:#666; margin-top:6px; }
+
+    .results {
+      background: linear-gradient(180deg,#fff 0%, #fff 100%);
+      border-radius:12px;
+      padding:18px;
+      margin-top:6px;
+      border:1px solid rgba(0,0,0,0.04);
+    }
+    .results .line { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed rgba(0,0,0,0.04); }
+    .results .line:last-child { border-bottom: none; }
+
+    .total {
+      margin-top:16px;
+      padding:14px;
+      border-radius:10px;
+      background:linear-gradient(90deg, rgba(217,24,31,0.08), rgba(217,24,31,0.03));
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-weight:700;
+      font-size:18px;
+      color:var(--veolia-red);
+      border:1px solid rgba(217,24,31,0.08);
+    }
+
+    .meta { font-size:13px; color:#444; }
+    footer.smallfoot { font-size:12px; color:#666; margin-top:10px; }
+
+    /* responsive */
+    @media (max-width:900px){
+      .container{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- left card: inputs -->
+    <div class="card" aria-labelledby="calc-title">
+      <header class="logo">
+        <!-- small Veolia-like logo (text) -->
+        <!-- placeholder, you can replace with real logo file if needed -->
+        <div>
+          <h1 id="calc-title" class="title">Veolia — Chemical Cost Calculator</h1>
+          <div class="small">กรอกค่า Dosage (ppm) และ Water Flow (m³/h) ผลลัพธ์เป็น Baht/day</div>
+        </div>
+      </header>
+
+      <!-- Inputs -->
+      <label for="dos_ic">Dosage IC1172 (ppm)</label>
+      <input id="dos_ic" type="number" placeholder="" min="0" step="any" />
+
+      <label for="dos_ap">Dosage AP1715 (ppm)</label>
+      <input id="dos_ap" type="number" placeholder="" min="0" step="any" />
+
+      <label for="flow">Water Flow (m³/h)</label>
+      <input id="flow" type="number" placeholder="" min="0" step="any" />
+
+      
+    </div>
+
+    <!-- right card: results -->
+    <div class="card">
+      <h2 style="margin:0;color:#222;font-size:18px;">ผลการคำนวณ</h2>
+      <div class="meta" style="margin-top:8px;">แสดงผลแบบแยกรายเคมี และรวมราคาทั้งหมด (Baht/day)</div>
+
+      <div class="results" id="resultsBox" aria-live="polite">
+        <div class="line"><div>IC1172 — Usage (kg/hr)</div><div id="usage_ic">-</div></div>
+        <div class="line"><div>IC1172 — Price (Baht/day)</div><div id="price_ic">-</div></div>
+
+        <div class="line"><div>AP1715 — Usage (kg/hr)</div><div id="usage_ap">-</div></div>
+        <div class="line"><div>AP1715 — Price (Baht/day)</div><div id="price_ap">-</div></div>
+
+        <div class="line"><div>Flow (m³/h)</div><div id="disp_flow">-</div></div>
+        <div class="line"><div>Last update</div><div id="last_update">-</div></div>
+
+        <div class="total">
+          <div>Total (Baht/day)</div>
+          <div id="total_price">-</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Constants taken from your Excel (Sheet1)
+    const PRICE_IC = 32.38;   // Baht/kg (IC1172)  -- from cell B4
+    const PRICE_AP = 134.34;  // Baht/kg (AP1715)  -- from cell C4
+
+    // DOM
+    const inDosIC = document.getElementById('dos_ic');
+    const inDosAP = document.getElementById('dos_ap');
+    const inFlow  = document.getElementById('flow');
+
+    const out_usage_ic = document.getElementById('usage_ic');
+    const out_price_ic = document.getElementById('price_ic');
+    const out_usage_ap = document.getElementById('usage_ap');
+    const out_price_ap = document.getElementById('price_ap');
+    const out_flow = document.getElementById('disp_flow');
+    const out_total = document.getElementById('total_price');
+    const out_update = document.getElementById('last_update');
+
+    // helper: format number
+    function fnum(x, dec=2){
+      if (!isFinite(x)) return '-';
+      return Number(x).toLocaleString(undefined, {minimumFractionDigits: dec, maximumFractionDigits: dec});
+    }
+
+    function calculate(){
+      // parse inputs
+      const dos_ic = parseFloat(inDosIC.value);
+      const dos_ap = parseFloat(inDosAP.value);
+      const flow = parseFloat(inFlow.value);
+
+      out_flow.textContent = isFinite(flow) ? fnum(flow,2) + ' m³/h' : '-';
+
+      // if any input missing -> show dashes except flow
+      if (!isFinite(dos_ic) && !isFinite(dos_ap) && !isFinite(flow)){
+        out_usage_ic.textContent = '-';
+        out_price_ic.textContent = '-';
+        out_usage_ap.textContent = '-';
+        out_price_ap.textContent = '-';
+        out_total.textContent = '-';
+        out_update.textContent = '-';
+        return;
+      }
+
+      // default missing dosages to 0 so partial inputs still calculate
+      const d_ic = isFinite(dos_ic) ? dos_ic : 0;
+      const d_ap = isFinite(dos_ap) ? dos_ap : 0;
+      const f = isFinite(flow) ? flow : 0;
+
+      // usage (kg/hr) = dosage(ppm) * flow(m3/h) / 1000
+      const usage_ic = d_ic * f / 1000.0;
+      const usage_ap = d_ap * f / 1000.0;
+
+      // price (Baht/day) = price_per_kg * usage(kg/hr) * 24
+      const price_ic = PRICE_IC * usage_ic * 24.0;
+      const price_ap = PRICE_AP * usage_ap * 24.0;
+
+      const total = price_ic + price_ap;
+
+      // display
+      out_usage_ic.textContent = fnum(usage_ic,2) + ' kg/hr';
+      out_price_ic.textContent = fnum(price_ic,2) + ' Baht/day';
+
+      out_usage_ap.textContent = fnum(usage_ap,2) + ' kg/hr';
+      out_price_ap.textContent = fnum(price_ap,2) + ' Baht/day';
+
+      out_total.textContent = fnum(total,2) + ' Baht/day';
+
+      const now = new Date();
+      out_update.textContent = now.toLocaleString();
+    }
+
+    // real-time: update on input
+    [inDosIC, inDosAP, inFlow].forEach(el => {
+      el.addEventListener('input', calculate);
+    });
+
+    // optional: prefill with values from your sheet for convenience
+    
+    calculate();
+  </script>
+</body>
+</html>
