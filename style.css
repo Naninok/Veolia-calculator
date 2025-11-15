@@ -89,3 +89,16 @@ input[type=number]{
   text-align: center;
   flex-grow: 1;
 }
+@media(max-width: 768px){
+body{
+padding:20px 0;
+align-items:flex-start;
+}
+.container{
+grid-template-columns:1fr; /* Only calculation card moves down */
+}
+/* Keep input layout SAME on mobile */
+.row{
+flex-direction:row;
+gap:10px;
+}
