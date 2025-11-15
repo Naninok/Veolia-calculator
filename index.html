@@ -1,243 +1,56 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Veolia — Chemical Cost Calculator</title>
-  <style>
-    :root{
-      --veolia-red:#d9181f;
-      --veolia-dark:#8b0f13;
-      --muted:#666;
-      --card:#fff;
-      --glass: rgba(255,255,255,0.98);
-      --shadow: 0 10px 30px rgba(0,0,0,0.08);
-      --radius:14px;
-      font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background: linear-gradient(180deg,#fff 0%, #fff6f6 100%);
-      color:#222;
-      padding:28px;
-    }
-
-    .container{
-      width:1000px;
-      max-width:100%;
-      display:grid;
-      grid-template-columns:360px 1fr;
-      gap:22px;
-      align-items:start;
-    }
-header.logo{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:6px;
-}
-
-    .card{
-      background:var(--glass);
-      border-radius:var(--radius);
-      padding:22px;
-      box-shadow:var(--shadow);
-      border:1px solid rgba(0,0,0,0.04);
-    }
-
-    header.logo{display:flex;gap:12px;align-items:center;margin-bottom:6px}
-    header .title{font-size:20px;color:var(--veolia-red);margin:0;font-weight:700}
-    header .sub{font-size:13px;color:var(--muted);margin-top:6px}
-
-    label{display:block;font-weight:700;margin-top:14px;color:#222}
-    .row{display:flex;gap:10px;align-items:center}
-    input[type="number"]{
-      width:100%;
-      padding:10px 12px;
-      border-radius:10px;
-      border:1px solid rgba(0,0,0,0.08);
-      background:#fff;
-      font-size:15px;
-      color:#111;
-    }
-    input[type="number"]::placeholder{color:#999}
-
-    .hint{font-size:13px;color:var(--muted);margin-top:8px}
-    .results .line{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed rgba(0,0,0,0.06)}
-    .results .line:last-child{border-bottom:none}
-    .muted{color:var(--muted);font-size:13px}
-
-    .total{
-      margin-top:14px;
-      padding:12px;
-      border-radius:10px;
-      background:linear-gradient(90deg, rgba(217,24,31,0.06), rgba(217,24,31,0.02));
-      border:1px solid rgba(217,24,31,0.06);
-      display:flex;justify-content:space-between;align-items:center;
-      color:var(--veolia-red);font-weight:700;font-size:17px;
-    }
-
-    .mixline{
-      margin-top:10px;
-      color:#0b63ff; /* blue */
-      font-weight:600;
-      font-size:14px;
-    }
-
-    .small{font-size:13px;color:var(--muted)}
-
-    /* responsive */
-    @media (max-width:920px){
-      .container{grid-template-columns: 1fr; width:100%}
-      .row{flex-direction:row}
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
+<div class="container">
 
-    <!-- left: inputs -->
-    <div class="card" aria-labelledby="calc-title">
-      <header class="logo">
-      
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Veolia_logo.svg/1024px-Veolia_logo.svg.png"style="width:120px; height:auto;"/>
-        
-        <div>
-    <h1 id="calc-title" class="title">Chemical Cost Calculator</h1>
-    <div class="sub"></div>
-        </div>
-      </header>
+  <div class="card">
+    <h1 class="title">Veolia — Chemical Cost Calculator</h1>
 
-      <label for="dos_ic">Dosage IC1172 (ppm)</label>
-      <input id="dos_ic" type="number" step="any" placeholder="">
+    <label>Dosage IC1172 (ppm)</label>
+    <input id="dos_ic" type="number" step="any">
 
-      <label for="dos_ap">Dosage AP1715 (ppm)</label>
-      <!-- AP dosage + pump spec side-by-side -->
-      <div class="row" style="margin-top:6px">
-        <input id="dos_ap" type="number" step="any" placeholder="">
-        <input id="pump_ap" type="number" step="any" placeholder="Pump (L/h)" title="ป้อนค่าการไหลของปั๊ม AP1715 เป็น L/h">
-      </div>
-
-      <label for="flow">Waste Water Flow (m³/h)</label>
-      <input id="flow" type="number" step="any" placeholder="">
-
-      <div class="hint"></div>
+    <label>Dosage AP1715 (ppm)</label>
+    <div class="row">
+      <input id="dos_ap" type="number" step="any" placeholder="ppm">
+      <input id="pump_ap" type="number" step="any" placeholder="Pump L/h">
     </div>
 
-    <!-- right: results -->
-    <div class="card" role="region" aria-label="ผลการคำนวณ">
-      <h2 style="margin:0;color:#222;font-size:18px">ผลการคำนวณ</h2>
-      <div class="small" style="margin-top:8px">ผลแยกรายเคมีและราคาต่อวัน (Baht/day)</div>
+    <label>Water Flow (m³/h)</label>
+    <input id="flow" type="number" step="any">
 
-      <div class="results" style="margin-top:12px">
-        <div class="line"><div>IC1172 — Usage (kg/hr)</div><div id="usage_ic">-</div></div>
-        <div class="line"><div>IC1172 — Price (Baht/day)</div><div id="price_ic">-</div></div>
-
-        <div class="line"><div>AP1715 — Usage (kg/hr)</div><div id="usage_ap">-</div></div>
-        <div class="line"><div>AP1715 — Price (Baht/day)</div><div id="price_ap">-</div></div>
-
-        <!-- mixing: blue text, hidden if pump not given -->
-        <div id="mix_ap" class="mixline" style="display:none"></div>
-
-        <div class="line"><div>Flow (m³/h)</div><div id="disp_flow">-</div></div>
-        <div class="line"><div>Last update</div><div id="last_update">-</div></div>
-
-        <div class="total"><div>Total (Baht/day)</div><div id="total_price">-</div></div>
-      </div>
+    <!-- Red buttons under Water Flow -->
+      <div class="sds-container">
+        <a href="https://legacy.watertechnologies.com/sds-service/sds/getDocument?docID=ka3Pe000003QVpdIAG&fileName=NA" target="_blank" class="sds-button">SDS IC1172</a>
+        <a href="https://legacy.watertechnologies.com/sds-service/sds/getDocument?docID=ka38Y000000HWJiQAO&fileName=NA" target="_blank" class="sds-button">SDS AP1715</a>
+        <a href="https://legacy.watertechnologies.com/sds-service/sds/getDocument?docID=ka3Pe000000uZr7IAE&fileName=NA" target="_blank" class="sds-button">SDS AP1789</a>
     </div>
-
   </div>
 
-  <script>
-    // Prices (Baht/kg)
-    const PRICE_IC = 32.38;
-    const PRICE_AP = 134.34;
+  <div class="card">
+    <h2>ผลการคำนวณ</h2>
+    <div class="results">
+      <div class="line"><div>IC1172 — Usage (kg/hr)</div><div id="usage_ic">-</div></div>
+      <div class="line"><div>IC1172 — Price (Baht/day)</div><div id="price_ic">-</div></div>
 
-    // DOM elements
-    const inDosIC = document.getElementById('dos_ic');
-    const inDosAP = document.getElementById('dos_ap');
-    const inPumpAP = document.getElementById('pump_ap');
-    const inFlow = document.getElementById('flow');
+      <div class="line"><div>AP1715 — Usage (kg/hr)</div><div id="usage_ap">-</div></div>
+      <div class="line"><div>AP1715 — Price (Baht/day)</div><div id="price_ap">-</div></div>
 
-    const out_usage_ic = document.getElementById('usage_ic');
-    const out_price_ic = document.getElementById('price_ic');
-    const out_usage_ap = document.getElementById('usage_ap');
-    const out_price_ap = document.getElementById('price_ap');
-    const out_flow = document.getElementById('disp_flow');
-    const out_total = document.getElementById('total_price');
-    const out_update = document.getElementById('last_update');
-    const out_mix_ap = document.getElementById('mix_ap');
+      <div class="mixline" id="mix_ap" style="display:none;"></div>
 
-    // number formatting helper
-    function fnum(x, dec=2){
-      if (!isFinite(x)) return "-";
-      return Number(x).toLocaleString(undefined, {minimumFractionDigits: dec, maximumFractionDigits: dec});
-    }
+      <div class="line"><div>Flow (m³/h)</div><div id="disp_flow">-</div></div>
+      <div class="line"><div>Last update</div><div id="last_update">-</div></div>
 
-    function calculate(){
-      const dos_ic = parseFloat(inDosIC.value);
-      const dos_ap = parseFloat(inDosAP.value);
-      const pump_ap = parseFloat(inPumpAP.value);
-      const flow = parseFloat(inFlow.value);
+      <div class="total"><div>Total (Baht/day)</div><div id="total_price">-</div></div>
+    </div>
+  </div>
 
-      out_flow.textContent = isFinite(flow) ? `${fnum(flow,2)} m³/h` : "-";
-
-      // treat missing dosages as 0 so partial input still shows results
-      const d_ic = isFinite(dos_ic) ? dos_ic : 0;
-      const d_ap = isFinite(dos_ap) ? dos_ap : 0;
-      const f = isFinite(flow) ? flow : 0;
-
-      // usage kg/hr
-      const usage_ic = d_ic * f / 1000.0;  // kg/hr
-      const usage_ap = d_ap * f / 1000.0;  // kg/hr
-
-      // price Baht/day = price_per_kg * usage(kg/hr) * 24
-      const price_ic = usage_ic * PRICE_IC * 24.0;
-      const price_ap = usage_ap * PRICE_AP * 24.0;
-
-      // display
-      out_usage_ic.textContent = isFinite(usage_ic) && usage_ic>0 ? `${fnum(usage_ic,2)} kg/hr` : "-";
-      out_price_ic.textContent = isFinite(price_ic) && price_ic>0 ? `${fnum(price_ic,2)} Baht/day` : "-";
-
-      out_usage_ap.textContent = isFinite(usage_ap) && usage_ap>0 ? `${fnum(usage_ap,2)} kg/hr` : "-";
-      out_price_ap.textContent = isFinite(price_ap) && price_ap>0 ? `${fnum(price_ap,2)} Baht/day` : "-";
-
-      const total = (isFinite(price_ic)?price_ic:0) + (isFinite(price_ap)?price_ap:0);
-      out_total.textContent = total>0 ? `${fnum(total,2)} Baht/day` : "-";
-
-      out_update.textContent = new Date().toLocaleString();
-
-      // MIXING calculation for AP1715
-      // Only show when pump_ap and usage_ap are valid
-      if (isFinite(pump_ap) && pump_ap > 0 && isFinite(usage_ap) && usage_ap > 0){
-        // usage_ap is kg/hr
-        // Convert to grams per hour:
-        const usage_g_per_hr = usage_ap * 1000; // g/hr
-        // grams per liter in dosing solution = usage_g_per_hr / pump_L_per_hr
-        const grams_per_L = usage_g_per_hr / pump_ap; // g per L
-        const grams_per_1000L = grams_per_L * 1000;   // g per 1000 L
-
-        out_mix_ap.style.display = "block";
-        out_mix_ap.textContent = `ผสม AP1715: ${fnum(grams_per_1000L,0)} g ใน 1000 L Solution`;
-      } else {
-        out_mix_ap.style.display = "none";
-        out_mix_ap.textContent = "";
-      }
-    }
-
-    // wire up inputs
-    [inDosIC, inDosAP, inPumpAP, inFlow].forEach(el=>{
-      el.addEventListener('input', calculate);
-    });
-
-    // initial calc
-    calculate();
-  </script>
+</div>
+<script src="script.js"></script>
 </body>
 </html>
-
