@@ -1,5 +1,5 @@
 const PRICE_IC = 32.38;
-const PRICE_AP = 134.34;
+const PRICE_AP = 100;
 
 const inDosIC = document.getElementById("dos_ic");
 const inDosAP = document.getElementById("dos_ap");
@@ -51,12 +51,12 @@ function calculate() {
 
   out_update.textContent = new Date().toLocaleString();
 
-  // Mixing AP1715
+  // Mixing AP1789
   if (isFinite(pump_ap) && pump_ap > 0 && usage_ap > 0) {
     const g_per_1000L = (usage_ap / pump_ap) * 1_000_000;
     out_mix_ap.style.display = "block";
     out_mix_ap.textContent =
-      "ต้องใช้ AP1715: " + fnum(g_per_1000L, 0) + " g ต่อ 1000 L Solution";
+      "ต้องใช้ AP1789: " + fnum(g_per_1000L, 0) + " g ต่อ 1000 L Solution";
   } else {
     out_mix_ap.style.display = "none";
   }
