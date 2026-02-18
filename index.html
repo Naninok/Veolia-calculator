@@ -15,20 +15,20 @@
     <label>Dosage IC1172 (ppm)</label>
     <input id="dos_ic" type="number" step="any">
 
-    <label>Dosage AP1715 (ppm)</label>
+    <label>Dosage AP1789 (ppm)</label>
     <div class="row">
-      <input id="dos_ap" type="number" step="any" placeholder="">
+      <input id="dos_ap" type="number" step="any" placeholder="ppm">
       <input id="pump_ap" type="number" step="any" placeholder="Pump L/h">
     </div>
 
     <label>Water Flow (m³/h)</label>
     <input id="flow" type="number" step="any">
 
-    <!-- Red buttons under Water Flow -->
+    
       <div class="sds-container">
         <a href="https://legacy.watertechnologies.com/sds-service/sds/getDocument?docID=ka3Pe000003QVpdIAG&fileName=NA" target="_blank" class="sds-button">SDS IC1172</a>
-        <a href="https://legacy.watertechnologies.com/sds-service/sds/getDocument?docID=ka38Y000000HWJiQAO&fileName=NA" target="_blank" class="sds-button">SDS AP1715</a>
         <a href="https://legacy.watertechnologies.com/sds-service/sds/getDocument?docID=ka3Pe000000uZr7IAE&fileName=NA" target="_blank" class="sds-button">SDS AP1789</a>
+	      <a href="https://legacy.watertechnologies.com/sds-service/sds/getDocument?docID=ka3Pe000004JqtRIAS&fileName=NA" target="_blank" class="sds-button">SDS CP1893</a>
     </div>
   </div>
 
@@ -38,8 +38,8 @@
       <div class="line"><div>IC1172 — Usage (kg/hr)</div><div id="usage_ic">-</div></div>
       <div class="line"><div>IC1172 — Price (Baht/day)</div><div id="price_ic">-</div></div>
 
-      <div class="line"><div>AP1715 — Usage (kg/hr)</div><div id="usage_ap">-</div></div>
-      <div class="line"><div>AP1715 — Price (Baht/day)</div><div id="price_ap">-</div></div>
+      <div class="line"><div>AP1789 — Usage (kg/hr)</div><div id="usage_ap">-</div></div>
+      <div class="line"><div>AP1789 — Price (Baht/day)</div><div id="price_ap">-</div></div>
 
       <div class="mixline" id="mix_ap" style="display:none;"></div>
 
@@ -54,4 +54,3 @@
 <script src="script.js"></script>
 </body>
 </html>
-
